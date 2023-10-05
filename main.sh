@@ -57,6 +57,9 @@ gsettings set org.gnome.desktop.interface clock-format 24h
 ## Restore minimise / maximise
 gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize,close"
 
+## Show Battery Percentage
+gsettings set org.gnome.desktop.interface show-battery-percentage true
+
 ## Install 1Password
 wget https://downloads.1password.com/linux/debian/amd64/stable/1password-latest.deb
 

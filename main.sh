@@ -46,10 +46,16 @@ synaptic \
 git \
 libavcodec-extra \
 libdvd-pkg \
-dconf-editor
+dconf-editor \
+gnupg2
 
 sudo dpkg-reconfigure libdvd-pkg
 
 ## Change to 24hr clock
 gsettings set org.gnome.desktop.interface clock-format 24h
+
+## Install 1Password
+wget https://downloads.1password.com/linux/debian/amd64/stable/1password-latest.deb
+
+## Install MEGA
 

@@ -8,6 +8,11 @@ fi
 echo "neil ALL = (root) NOPASSWD : ALL" > /etc/sudoers.d/neil
 exit
 
+## update  the OS
+sudo add-apt-repository universe -y
+sudo add-apt-repository multiverse -y
+sudo apt update && sudo apt upgrade -y
+
 ## Set up Flatpak
 flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
@@ -25,4 +30,26 @@ flatpak install flathub com.brave.Browser -y
 flatpak install flathub eu.betterbird.Betterbird -y
 flatpak install flathub org.freefilesync.FreeFileSync -y
 flatpak install flathub io.gitlab.news_flash.NewsFlash -y
+
+## Generate ssh Keys
+ssh-keygen -t ed25519 -C "popos"
+
+## Install some stuff
+sudo apt install -y \
+neofetch \
+flameshot \
+caffine \
+gparted \
+gnome-tweaks \
+ubuntu-restricted-extras \
+synaptic \
+git \
+libavcodec-extra \
+libdvd-pkg \
+dconf-editor
+
+sudo dpkg-reconfigure libdvd-pkg
+
+## Change to 24hr clock
+gsettings set org.gnome.desktop.interface clock-format 24h
 

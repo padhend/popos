@@ -26,7 +26,6 @@ flatpak install flathub org.nmap.Zenmap -y
 flatpak install flathub net.cozic.joplin_desktop -y
 flatpak install flathub org.remmina.Remmina -y
 flatpak install flathub net.devolutions.RDM -y
-flatpak install flathub com.brave.Browser -y
 flatpak install flathub eu.betterbird.Betterbird -y
 flatpak install flathub org.freefilesync.FreeFileSync -y
 flatpak install flathub io.gitlab.news_flash.NewsFlash -y
@@ -38,7 +37,7 @@ ssh-keygen -t ed25519 -C "popos"
 sudo apt install -y \
 neofetch \
 flameshot \
-caffine \
+caffeine \
 gparted \
 gnome-tweaks \
 ubuntu-restricted-extras \

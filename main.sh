@@ -11,10 +11,13 @@ fi
 echo "neil ALL = (root) NOPASSWD : ALL" > /etc/sudoers.d/neil
 exit
 
-####################
-## update  the OS ##
-####################
-sudo apt update && sudo apt upgrade -y
+###################
+## Update the OS ##
+###################
+cat << EOF >  ~/.bash_aliases
+alias update='sudo apt update && sudo apt upgrade -y'
+EOF
+update
 
 ####################
 ## Set up Flatpak ##

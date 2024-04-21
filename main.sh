@@ -1,22 +1,12 @@
 #!/bin/sh
 
-##############################
-## If not root, become root ##
-##############################
-if [ $USER != "root" ]
-then
-  sudo su -
-fi
-## Add your account to the sudoers file, so you dont have to keep typing the password 
-echo "neil ALL = (root) NOPASSWD : ALL" > /etc/sudoers.d/neil
-exit
-
 ###################
 ## Update the OS ##
 ###################
 cat << EOF >>  ~/.bash_aliases
 alias update='sudo apt update && sudo apt upgrade -y'
 EOF
+source ~/.bashrc
 update
 
 ####################
@@ -40,7 +30,7 @@ flatpak install flathub io.gitlab.news_flash.NewsFlash -y
 #######################
 ## Generate ssh Keys ##
 #######################
-ssh-keygen -t ed25519 -C "neil@tower02"
+ssh-keygen -t ed25519 -C "$USER@$(hostname)"
 
 ########################
 ## Install some stuff ##
@@ -62,6 +52,7 @@ git \
 libavcodec-extra \
 libdvd-pkg \
 dconf-editor \
+openssh-server \
 gnupg2
 
 sudo dpkg-reconfigure libdvd-pkg
@@ -185,18 +176,18 @@ if [ ! -d /mnt/encrypted ]; then
 fi
 if grep -qs '/dev/sr0 ' /proc/mounts; then
     sudo umount /dev/sr0
-else
-    echo "It's not mounted."
 fi
-sudo mount -o loop /dev/sr0 /mnt/ironkey
+if grep -qs '/dev/sr0 ' /proc/mounts; then
+  sudo mount -o loop /dev/sr0 /mnt/ironkey
+  ### mount it in the 'encrypted folder
+  sudo /mnt/ironkey/linux/ironkey --mount /mnt/encrypted
+fi
 
-### mount it in the 'encrypted folder
-sudo /mnt/ironkey/linux/ironkey --mount /mnt/encrypted
-
-## Disable IPv6 using grub
-### You need to modify GRUB_CMDLINE_LINUX_DEFAULT and GRUB_CMDLINE_LINUX to disable IPv6 on boot:
-GRUB_CMDLINE_LINUX_DEFAULT="quiet splash ipv6.disable=1"
-GRUB_CMDLINE_LINUX="ipv6.disable=1"
+#############################
+## Disable IPv6 using grub ##
+#############################
+sudo sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash ipv6.disable=1"/g' /etc/default/grub
+sudo sed -i 's/^GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="ipv6.disable=1"/g' /etc/default/grub
 ### Then update grub
 sudo update-grub
 

@@ -1,23 +1,31 @@
 #!/bin/sh
+
+##############################
+## If not root, become root ##
+##############################
 if [ $USER != "root" ]
 then
-    echo "Not root ... exiting"
-else
   sudo su -
 fi
+## Add your account to the sudoers file, so you dont have to keep typing the password 
 echo "neil ALL = (root) NOPASSWD : ALL" > /etc/sudoers.d/neil
 exit
 
-## update  the OS
+####################
+## update  the OS ##
+####################
 sudo apt update && sudo apt upgrade -y
 
-## Set up Flatpak
+####################
+## Set up Flatpak ##
+####################
 sudo apt install -y flatpak
 sudo apt install -y gnome-software-plugin-flatpak
 flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-
-## Flathub
+##############################
+## Install Flathub packages ##
+##############################
 flatpak install flathub com.bitwarden.desktop -y
 flatpak install flathub org.jdownloader.JDownloader -y
 flatpak install flathub org.nmap.Zenmap -y
@@ -26,10 +34,14 @@ flatpak install flathub eu.betterbird.Betterbird -y
 flatpak install flathub org.freefilesync.FreeFileSync -y
 flatpak install flathub io.gitlab.news_flash.NewsFlash -y
 
-## Generate ssh Keys
-ssh-keygen -t ed25519 -C "neil@popos"
+#######################
+## Generate ssh Keys ##
+#######################
+ssh-keygen -t ed25519 -C "neil@tower02"
 
-## Install some stuff
+########################
+## Install some stuff ##
+########################
 sudo apt install -y \
 neofetch \
 spacefm \
@@ -39,6 +51,9 @@ caffeine \
 gparted \
 gnome-tweaks \
 ubuntu-restricted-extras \
+gnome-extensions-app \
+gnome-tweaks \
+gnome-shell-extension-appindicator \
 synaptic \
 git \
 libavcodec-extra \
@@ -46,7 +61,11 @@ libdvd-pkg \
 dconf-editor \
 gnupg2
 
-## Remove some stuff
+sudo dpkg-reconfigure libdvd-pkg
+
+#######################
+## Remove some stuff ##
+#######################
 sudo apt purge -y \
 gnome-contacts \
 gnome-online-accounts \
@@ -58,7 +77,9 @@ gnome-user-docs-ja \
 gnome-user-docs-pt \
 gnome-user-docs-ru
 
-## Install VSCode
+####################
+## Install VSCode ##
+####################
 sudo apt install -y wget gpg
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
 sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
@@ -68,41 +89,47 @@ sudo apt install apt-transport-https
 sudo apt update -y
 sudo apt install -y code
 
-## Install PIA
-cd ~/Downloads
-wget https://installers.privateinternetaccess.com/download/pia-linux-3.3.1-06924.run
-chmod +x ~/Downloads/pia-linux-3.3.1-06924.run
-~/Downloads/pia-linux-3.3.1-06924.run
-cd
+#################
+## Install PIA ##
+#################
+wget https://installers.privateinternetaccess.com/download/pia-linux-3.5.7-08120.run -P ~/Downloads
+chmod +x ~/Downloads/pia-linux-3.5.7-08120.run
+~/Downloads/pia-linux-3.5.7-08120.run
 
-
-sudo dpkg-reconfigure libdvd-pkg
-
-## Some Settings
+###################
+## Some Settings ##
+###################
 gsettings set org.gnome.desktop.interface clock-format 24h
 gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize,close"
 gsettings set org.gnome.desktop.interface show-battery-percentage true
 
-## Install 1Password
-wget https://downloads.1password.com/linux/debian/amd64/stable/1password-latest.deb
+##################
+## Install MEGA ##
+##################
+wget https://mega.nz/linux/repo/xUbuntu_22.04/amd64/megasync-xUbuntu_22.04_amd64.deb -P ~/Downloads
+sudo apt install -y ~/Downloads/megasync-xUbuntu_22.04_amd64.deb
 
-## Install MEGA
-
-## Set up RDP
-sudo apt install -y gnome-tweak-tool obs-studio libavcodec-extra libdvd-pkg; sudo dpkg-reconfigure libdvd-pkg vlc code xrdp
+################
+## Set up RDP ##
+################
+sudo apt install -y xrdp
 sudo systemctl enable xrdp
 sudo systemctl start xrdp
 sudo ufw allow from 192.168.178.0/24 port 3389 proto tcp
 echo gnome-session > ~/.xsession
 chmod +x ~/.xsession
 
-## Install Thorium Browser
+#############################
+## Install Thorium Browser ##
+#############################
 wget https://dl.thorium.rocks/debian/dists/stable/thorium.list
 sudo mv thorium.list /etc/apt/sources.list.d/
 sudo apt update
 sudo apt install -y thorium-browser
 
-## Remove Snaps
+##################
+## Remove Snaps ##
+##################
 snap --version
 snap list
 
@@ -136,11 +163,14 @@ sudo rm -rf /snap
 sudo rm -rf /var/snap
 sudo rm -rf /var/lib/snapd
 
-
-## Install Yubikey
+#####################
+## Install Yubikey ##
+#####################
 sudo apt install -y yubioath-desktop yubikey-agent
 
-## Enable Ironkey
+####################
+## Enable Ironkey ##
+####################
 sudo apt install -y lib32gcc-s1
 ## Plug in the IronKey and mount the unencrypted partition
 lsblk

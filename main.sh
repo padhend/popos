@@ -14,7 +14,7 @@ exit
 ###################
 ## Update the OS ##
 ###################
-cat << EOF >  ~/.bash_aliases
+cat << EOF >>  ~/.bash_aliases
 alias update='sudo apt update && sudo apt upgrade -y'
 EOF
 update

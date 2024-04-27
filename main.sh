@@ -1,5 +1,21 @@
 #!/bin/sh
 
+#####################
+## Get the OS type ##
+#####################
+
+if [ -f /etc/os-release ]; then
+  source /etc/os-release
+else
+  echo "os-release file doesnt exist"
+  exit 1
+fi
+OS=${ID}
+VERSION=${VERSION_ID}
+
+
+echo $OS $VERSION
+
 ###################
 ## Update the OS ##
 ###################
@@ -18,19 +34,53 @@ flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/fl
 
 ##############################
 ## Install Flathub packages ##
-##############################
-flatpak install flathub com.bitwarden.desktop -y
+##############################y
 flatpak install flathub org.jdownloader.JDownloader -y
 flatpak install flathub org.nmap.Zenmap -y
-flatpak install flathub net.cozic.joplin_desktop -y
-flatpak install flathub eu.betterbird.Betterbird -y
 flatpak install flathub org.freefilesync.FreeFileSync -y
 flatpak install flathub io.gitlab.news_flash.NewsFlash -y
+
+###############
+## Bitwarden ##
+###############
+## I changed to appimage from the Bitwarden github rather than an unofficial Flatpak
+## Download bitwarden Appimage
+if [ ! -d $HOME/.bitwarden ]; then
+  mkdir $HOME/.bitwarden
+fi
+wget https://github.com/bitwarden/clients/releases/download/desktop-v2024.4.1/Bitwarden-2024.4.1-x86_64.AppImage -P $HOME/.bitwarden
+
+## Download desktop icon
+wget https://github.com/bitwarden/brand/blob/main/icons/64x64.png -P $HOME/.bitwarden
+
+## create the startmenu entry
+cat << EOF > /usr/share/applications/Bitwarden.desktop
+[Desktop Entry]
+Name=Bitwarden
+GenericName=Bitwarden
+Exec=$HOME/.bitwarden/Bitwarden-2024.4.1-x86_64.AppImage
+Terminal=false
+Icon=$HOME/.bitwarden/64x64.png
+Type=Application
+Categories=Internet;
+Version=2024.4.1
+EOF
 
 #######################
 ## Generate ssh Keys ##
 #######################
-ssh-keygen -t ed25519 -C "$USER@$(hostname)"
+if [ -d ~/.ssh/ ]; then
+  chmod 700 .ssh/
+  chmod 644 .ssh/id_rsa.pub
+  chmod 600 .ssh/id_rsa
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_rsa
+  ## enter your passphrase
+else
+  ssh-keygen -t ed25519 -C "$USER@$(hostname)"
+fi
+
+
 
 ########################
 ## Install some stuff ##
